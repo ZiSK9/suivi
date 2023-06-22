@@ -1,0 +1,399 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paneaux d'administration</title>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css'>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/font/material-design-icons/Material-Design-Icons.woff'>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css2/css/style.css' %}">
+  <link href="{% static 'css/style.css'%}" rel="stylesheet" type="text/css" media="all" />
+  
+  
+  <style>
+   
+   .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+table{
+      width: 84%;
+      height: 100px;
+    right: 0;
+    text-align: center;
+    }
+th,td {
+    border: 1px solid black;
+    padding: 10px;
+}
+#data {
+    margin-bottom: 10px;
+}
+#data input, button {
+    padding: 10px;
+    width: 90px;
+}
+.btnDelete,
+  .btnEdit {
+    padding: 5px 10px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btnEdit {
+    background-color: #3498db;
+  }
+  .action-cell {
+    border-left: none;
+    border-right: none;
+  }
+    </style>
+</head>
+
+<body onload="pvHandler()">
+    <ul id="slide-out" class="side-nav fixed z-depth-2">
+        <li class="center no-padding">
+            <div class="indigo darken-2 white-text" style="height: 180px;">
+                <div class="row">
+                    <img style="margin-top: 8%;" width="220" src="{% static 'images/logo.png'%}" class="responsive-img" />
+                </div>
+            </div>
+        </li>
+    </li>
+    <li id="dash_dashboard">
+      <a class="waves-effect" href="{% url 'dashboard' %}">
+          <b>Dashboard</b>
+      </a>
+    </li>
+    <li id="dash_dashboard">
+        <a class="waves-effect" href="{% url 'demandesComptes' %}">
+          <b>Validation des comptes</b>
+        </a>
+      </li>
+      <li id="dash_dashboard">
+        <a class="waves-effect" href="{% url 'listeinscription' %}">
+          <b>Liste des inscriptions</b>
+        </a>
+      </li>
+    <li id="dash_dashboard">
+      <a class="waves-effect" href="{% url 'listeReinscription' %}">
+        <b>Liste des reinscriptions</b>
+      </a>
+    </li>
+    <li id="dash_dashboard">
+      <a class="waves-effect" href="{% url 'etatDavencement' %}">
+        <b>Situation doctorants</b>
+      </a>
+    </li>
+
+    
+    <li id="dash_dashboard">
+      <a class="waves-effect" href="{% url 'editionPV' %}">
+        <b>Edition de PV</b>
+      </a>
+    </li>
+    <li id="dash_dashboard">
+      <a class="waves-effect" href="{% url 'ajouterEncadreur' %}">
+        <b>Affectation encadreur</b>
+      </a>
+    </li>
+    <li id="dash_dashboard">
+      <a class="waves-effect" href="{% url 'controlReinscription' %}">
+        <b>Control reinscription</b>
+      </a>
+    </li>
+    
+    </ul>
+    </ul>
+    <header>
+        <ul class="dropdown-content" id="user_dropdown">
+            <li>
+                <a class="indigo-text" href="{% url 'loginCFD' %}">Logout</a>
+            </li>
+        </ul>
+
+        <nav class="indigo" role="navigation">
+            <div class="nav-wrapper">
+                <a data-activates="slide-out" class="button-collapse show-on-" href="#!">
+                    <img style="margin-top: 17px; margin-left: 5px;" src="https://res.cloudinary.com/dacg0wegv/image/upload/t_media_lib_thumb/v1463989873/smaller-main-logo_3_bm40iv.gif"
+                    />
+                </a>
+
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a class='right dropdown-button' href='' data-activates='user_dropdown'>
+                            <i class=' material-icons'>account_circle</i>
+                        </a>
+                    </li>
+                </ul>
+
+                <a href="#" data-activates="slide-out" class="button-collapse">
+                    <i class="mdi-navigation-menu"></i>
+                </a>
+            </div>
+        </nav>
+
+        
+      </header>
+      <form method="POST" action="{% url 'editionPV' %}">
+        {% csrf_token %}
+        <div class="container">
+          <div id="data">
+            <input type="text" name="numero_inscription" id="numero_inscription" placeholder="Numero d`inscription" value="" required="">
+            <input type="text" name="nom_prenom" id="nom_prenom" placeholder="Nom et prénom" value="" required="">
+            <input type="number" name="cours_de_specialite" id="cours_de_specialite" placeholder="Cours de spécialité" value="" required="">
+            {% if cours_de_specialite_error %}
+            <p class="error-message">{{ cours_de_specialite_error }}</p>
+            {% endif %}
+            <input type="number" name="methodologie" id="methodologie" placeholder="Méthodologie" value="" required="">
+            {% if methodologie_error %}
+            <p class="error-message">{{ methodologie_error }}</p>
+            {% endif %}
+            <input type="number" name="competences_anglais" id="competences_anglais" placeholder="Compétences en anglais" value="" required="">
+            {% if competences_anglais_error %}
+            <p class="error-message">{{ competences_anglais_error }}</p>
+            {% endif %}
+            <input type="number" name="communications" id="communications" placeholder="Communications" value="" required="">
+            <input type="number" name="communications2" id="communications2" placeholder="Communications" value="" >
+            <input type="number" name="publications" id="publications" placeholder="Publications" value="" required="">
+            <input type="number" name="tic" id="tic" placeholder="Tic" value="" required="">
+            <button id="btnAdd" onclick="addDataToTable()">ajouter</button>
+          </div>
+          </form>
+      
+          <table id="table">
+            <tr>
+                <th>Numero d'inscription</th>
+                <th>Nom et prénom</th>
+                <th>Cours de spécialité</th>
+                <th>Méthodologie de recherche et initiation à la pédagogie</th>
+                <th>Compétences en anglais</th>
+                <th>Communications</th>
+                <th>Publications</th>
+                <th>Tic</th>
+                <th>Total</th>
+            </tr>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.numero_inscription }}</td>
+                <td>{{ entry.nom_prenom }}</td>
+                <td>{{ entry.cours_de_spécialité }}</td>
+                <td>{{ entry.methodologie }}</td>
+                <td>{{ entry.compétences_anglais }}</td>
+                <td>{{ entry.communications }}<br>{{ entry.communications2 }}</td>
+                <td>{{ entry.publications }}</td>
+                <td>{{ entry.tic }}</td>
+                <td>{{ entry.total }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        
+      
+    
+
+        
+    <script>
+      
+var rIndex;
+var table = document.getElementById("table");
+// check the empty input
+function checkEmptyInput(){
+            
+                
+    var isEmpty = false;
+    var numero_inscription=document.getElementById("numero_inscription").value;
+    var nom_prenom = document.getElementById("nom_prenom").value;
+    var cours_de_spécialité = document.getElementById("cours_de_specialite").value;
+    var methodologie = document.getElementById("methodologie").value;
+    var competences_anglais = document.getElementById("competences_anglais").value;
+    var communications = document.getElementById("communications").value;
+    var communications2 = document.getElementById("communications2").value;
+    var publications = document.getElementById("publications").value;
+    var tic = document.getElementById("tic").value;
+                if(numero_inscription === ""){
+                    alert("First Name Connot Be Empty");
+                    isEmpty = true;
+                }
+                if(nom_prenom === ""){
+                    alert("First Name Connot Be Empty");
+                    isEmpty = true;
+                }
+                else if(cours_de_spécialité === ""){
+                    alert("Last Name Connot Be Empty");
+                    isEmpty = true;
+                }
+                else if(methodologie === ""){
+                    alert("Age Connot Be Empty");
+                    isEmpty = true;
+                }
+                else if(competences_anglais === ""){
+                  alert("Last Name Connot Be Empty");
+                  isEmpty = true;
+              }
+              else if(communications === ""){
+                  alert("Age Connot Be Empty");
+                  isEmpty = true;
+              }
+              else if(communications2 === ""){
+                  alert("Age Connot Be Empty");
+                  isEmpty = true;
+              }
+              else if(publications === ""){
+                alert("Last Name Connot Be Empty");
+                isEmpty = true;
+            }
+            else if(tic === ""){
+                alert("Age Connot Be Empty");
+                isEmpty = true;
+            }
+                return isEmpty;
+            }
+            // add Row
+            function addDataToTable() {
+              if (!checkEmptyInput()) {
+                  var newRow = table.insertRow(table.rows.length);
+                  var cell1 = newRow.insertCell(0);
+                  var cell2 = newRow.insertCell(1);
+                  var cell3 = newRow.insertCell(2);
+                  var cell4 = newRow.insertCell(3);
+                  var cell5 = newRow.insertCell(4);
+                  var cell6 = newRow.insertCell(5);
+                  var cell7 = newRow.insertCell(6);
+                  var cell8 = newRow.insertCell(7);
+                  var cell8 = newRow.insertCell(8);
+                  
+                  var numero_inscription=document.getElementById("numero_inscription").value;
+                  var nom_prenom = document.getElementById("nom_prenom").value;
+                  var cours_de_specialite = document.getElementById("cours_de_specialite").value;
+                  var methodologie = document.getElementById("methodologie").value;
+                  var competences_anglais = document.getElementById("competences_anglais").value;
+                  var communications = document.getElementById("communications").value;
+                  var communications = document.getElementById("communications2").value;
+                  var publications = document.getElementById("publications").value;
+                  var tic = document.getElementById("tic").value;
+                           if (cours_de_specialite > 12) {
+                                  alert('Cours de spécialité max 12 points.');
+                                  return;
+                                  }
+
+                            if (methodologie > 6) {
+                                  alert('Méthodologie max 6 points.');
+                                  return;
+                                  }
+
+                            if (competences_anglais > 6) {
+                                  alert('Compétences en anglais max 6 points.');
+                                 return;
+                                  }
+
+
+
+                  
+          
+                  cell1.innerHTML = numero_inscription;
+                  cell2.innerHTML = nom_prenom;
+                  cell3.innerHTML = cours_de_specialite;
+                  cell4.innerHTML = methodologie;
+                  cell5.innerHTML = competences_anglais;
+                  cell6.innerHTML = communications;
+                  cell7.innerHTML = communications2;
+                  cell8.innerHTML = publications;
+                  cell9.innerHTML = tic;
+
+
+                  
+          
+                  selectedRowToInput();
+              }
+          }
+          
+          function selectedRowToInput() {
+              for (var i = 1; i < table.rows.length; i++) {
+                  table.rows[i].onclick = function () {
+                      rIndex = this.rowIndex;
+                      document.getElementById("numero_inscription").value = this.cells[0].innerHTML;
+                      document.getElementById("nom_prenom").value = this.cells[1].innerHTML;
+                      document.getElementById("cours_de_specialite").value = this.cells[2].innerHTML;
+                      document.getElementById("methodologie").value = this.cells[3].innerHTML;
+                      document.getElementById("competences_anglais").value = this.cells[4].innerHTML;
+                      document.getElementById("communications").value = this.cells[5].innerHTML;
+                      document.getElementById("communications2").value = this.cells[6].innerHTML;
+                      document.getElementById("publications").value = this.cells[7].innerHTML;
+                      document.getElementById("tic").value = this.cells[8].innerHTML;
+                  };
+              }
+          }
+          
+          function editDataToTable() {
+              var numero_inscription=document.getElementById("numero_inscription").value;
+              var nom_prenom = document.getElementById("nom_prenom").value;
+              var cours_de_specialite = document.getElementById("cours_de_specialite").value;
+              var methodologie = document.getElementById("methodologie").value;
+              var competences_anglais = document.getElementById("competences_anglais").value;
+              var communications = document.getElementById("communications").value;
+              var communications = document.getElementById("communications2").value;
+              var publications = document.getElementById("publications").value;
+              var tic = document.getElementById("tic").value;
+          
+              if (!checkEmptyInput()) {
+                  table.rows[rIndex].cells[0].innerHTML = numero_inscription;
+                  table.rows[rIndex].cells[1].innerHTML = nom_prenom;
+                  table.rows[rIndex].cells[2].innerHTML = cours_de_specialite;
+                  table.rows[rIndex].cells[3].innerHTML = methodologie;
+                  table.rows[rIndex].cells[4].innerHTML = competences_anglais;
+                  table.rows[rIndex].cells[5].innerHTML = communications;
+                  table.rows[rIndex].cells[6].innerHTML = communications2;
+                  table.rows[rIndex].cells[7].innerHTML = publications;
+                  table.rows[rIndex].cells[8].innerHTML = tic;
+              }
+          }
+function deleteDataToTable(){
+            
+                table.deleteRow(rIndex);
+                // clear input text
+                document.getElementById("numero_inscription").value = "";
+                document.getElementById("nom_prenom").value = "";
+                document.getElementById("cours_de_spécialité").value = "";
+                document.getElementById("methodologie").value = "";
+                document.getElementById("competences_anglais").value = "";
+                document.getElementById("communications").value = "";
+                document.getElementById("communications2").value = "";
+                document.getElementById("publications").value = "";
+                document.getElementById("tic").value = "";
+            }
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+    
+    
+  
+    
+    
+    
+    
+  
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script src="{% static '/js/print.min.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/editionPV.js' %}"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js'></script>
+    <script src="{% static 'js/index.js'%}"></script>
+   
+</body>
+
+</html>

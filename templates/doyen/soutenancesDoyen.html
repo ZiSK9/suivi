@@ -1,0 +1,213 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paneaux d'administration</title>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css'>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/font/material-design-icons/Material-Design-Icons.woff'>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css2/css/style.css' %}">
+  <link href="{% static 'css/style.css'%}" rel="stylesheet" type="text/css" media="all" />
+  
+ 
+  <style>
+    
+    table {
+    font-size: 20px;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 400px; /* Adjust the value as needed */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+
+
+  </style>
+</head>
+
+<body >
+    <ul id="slide-out" class="side-nav fixed z-depth-2">
+        <li class="center no-padding">
+            <div class="indigo darken-2 white-text" style="height: 180px;">
+                <div class="row">
+                    <img style="margin-top: 8%;" width="220" src="{% static 'images/logo.png'%}" class="responsive-img" />
+                </div>
+            </div>
+        </li>
+        <li id="dash_dashboard">
+          <a class="waves-effect" href="{% url 'dashboards' %}">
+              <b>Dashboard</b>
+          </a>
+        </li>
+        <li id="dash_dashboard">
+          <a class="waves-effect" href="{% url 'liste_inscription_doyen' %}">
+            <b>Liste des inscriptions</b>
+          </a>
+        </li>
+        <li id="dash_dashboard">
+          <a class="waves-effect" href="{% url 'liste_reinscription_doyen' %}">
+            <b>Liste des réinscriptions</b>
+          </a>
+        </li>
+        
+        <li id="dash_dashboard">
+          <a class="waves-effect" href="{% url 'etat_avencement_doyen' %}">
+            <b>Situation doctorants</b>
+          </a>
+        </li>
+    
+        
+        <li id="dash_dashboard">
+          <a class="waves-effect" href="{% url 'editionPVdoyen' %}">
+            <b>Edition de PV</b>
+          </a>
+        </li>
+        <li id="dash_dashboard">
+            <a class="waves-effect" href="{% url 'soutenanceDoyen' %}">
+              <b>Soutenances</b>
+            </a>
+        </li>
+        
+      </ul>
+      </ul>
+    <header>
+        <ul class="dropdown-content" id="user_dropdown">
+            <li>
+                <a class="indigo-text" href="{% url 'loginDoyen' %}">Logout</a>
+            </li>
+        </ul>
+
+        <nav class="indigo" role="navigation">
+            <div class="nav-wrapper">
+                <a data-activates="slide-out" class="button-collapse show-on-" href="#!">
+                    <img style="margin-top: 17px; margin-left: 5px;" src="https://res.cloudinary.com/dacg0wegv/image/upload/t_media_lib_thumb/v1463989873/smaller-main-logo_3_bm40iv.gif"
+                    />
+                </a>
+
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a class='right dropdown-button' href='' data-activates='user_dropdown'>
+                            <i class=' material-icons'>account_circle</i>
+                        </a>
+                    </li>
+                </ul>
+
+                <a href="#" data-activates="slide-out" class="button-collapse">
+                    <i class="mdi-navigation-menu"></i>
+                </a>
+            </div>
+        </nav>
+
+        
+    </header>
+    <main>
+    <div class="row">
+      <div class="tableview" class="col s12">
+        <table>
+            <thead>
+                <tr>
+                    <th>N° inscription</th>
+                    <th>Doctorant</th>
+                    <th>Encadreur</th>
+                    <th>Etat</th>
+                    <th>PV CSD/CSF</th>
+                    <th>Autorisation de soutenance</th>
+                    <th>PV de soutenance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doctorant in doctorants %}
+                {% if doctorant.soutenance.exists %}
+                <tr>
+                    <td>{{ doctorant.user.username }}</td>
+                    <td>
+                        {% if doctorant.inscription.all %}
+                        {% for inscription in doctorant.inscription.all %}
+                        {{ inscription.prenom }} {{ inscription.nom }}<br>
+                        {% endfor %}
+                        {% elif doctorant.reinscription.all %}
+                        {% for reinscription in doctorant.reinscription.all %}
+                        {{ reinscription.prenom }} {{ reinscription.nom }}<br>
+                        {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td>{{ doctorant.encadreur.nom_prenom }}</td>
+                    <td>
+                      {% if doctorant.soutenance.exists %}
+                        {% with soutenance=doctorant.soutenance.last %}
+                          {% if soutenance.action %}
+                            Accepté
+                          {% else %}
+                            Refusé
+                          {% endif %}
+                        {% endwith %}
+                      {% else %}
+                      N/A
+                      {% endif %}
+                    </td>
+                    
+                    <td>
+                      {% for soutenance in doctorant.soutenance.all %}
+                        {% if soutenance.csd_csf %}
+                          <a href="{{ soutenance.csd_csf.url }}" download>Télécharger</a>
+                        {% endif %}
+                      {% empty %}
+                        N/A
+                      {% endfor %}
+                    </td>
+                    
+                    <td>
+                        {% for soutenance in doctorant.soutenance.all %}
+                        {% if soutenance.autorisation_soutenance %}
+                        <a href="{{ soutenance.autorisation_soutenance.url }}" download>Télécharger</a>
+                        {% endif %}
+                        {% empty %}
+                          N/A
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for soutenance in doctorant.soutenance.all %}
+                        {% if soutenance.pv_soutenance %}
+                        <a href="{{ soutenance.pv_soutenance.url }}" download>Télécharger</a>
+                        {% endif %}
+                        {% empty %}
+                          N/A
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+    
+
+        
+  
+    
+    
+  
+    
+    
+    
+    
+  
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script src="{% static '/js/print.min.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/editionPV.js' %}"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js'></script>
+    <script src="{% static 'js/index.js'%}"></script>
+   
+</body>
+
+</html>

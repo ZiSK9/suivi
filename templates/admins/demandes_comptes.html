@@ -1,0 +1,247 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paneaux d'administration</title>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css'>
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/font/material-design-icons/Material-Design-Icons.woff'>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css2/css/style.css' %}">
+  <link href="{% static 'css/style.css'%}" rel="stylesheet" type="text/css" media="all" />
+  
+  <style>
+   .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-select {
+    display: none;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100px; /* Adjust the width as needed */
+  }
+
+  .dropdown-menu li {
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .dropdown-menu li:hover {
+    background-color: #f5f5f5;
+  }
+    </style>
+</head>
+
+<body >
+  <ul id="slide-out" class="side-nav fixed z-depth-2">
+    <li class="center no-padding">
+      <div class="indigo darken-2 white-text" style="height: 180px;">
+        <div class="row">
+          <img style="margin-top: 8%;" width="220" src="{% static 'images/logo.png'%}" class="responsive-img" />
+        </div>
+      </div>
+    </li>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'dashboard' %}">
+        <b>Dashboard</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'demandesComptes' %}">
+      <b>Validation des comptes</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'listeinscription' %}">
+      <b>Liste des inscriptions</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'listeReinscription' %}">
+      <b>Liste des réinscriptions</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'etatDavencement' %}">
+      <b>Situation doctorants</b>
+    </a>
+  </li>
+
+  
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'edition_PV_2' %}">
+      <b>Edition de PV</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'demandesSoutenances' %}">
+      <b>Soutenances</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'ajouterEncadreur' %}">
+      <b>Affectation doctorants</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'controlReinscription' %}">
+      <b>Control réinscription</b>
+    </a>
+  </li>
+  <li id="dash_dashboard">
+    <a class="waves-effect" href="{% url 'demandesPassage' %}">
+      <b>Demandes passage d`année</b>
+    </a>
+  </li>
+  </ul>
+  </ul>
+
+  <header>
+    <ul class="dropdown-content" id="user_dropdown">
+      <li>
+        <a class="indigo-text" href="{% url 'loginCFD' %}">Logout</a>
+      </li>
+    </ul>
+
+    <nav class="indigo" role="navigation">
+      <div class="nav-wrapper">
+        <a data-activates="slide-out" class="button-collapse show-on-" href="#!">
+          <img style="margin-top: 10px; margin-left: 10px; height: 60px;" src="{% static 'images/logo.png'%}" />
+        </a>
+
+        <ul class="right hide-on-med-and-down">
+          <li>
+            <a class='right dropdown-button' href='' data-activates='user_dropdown'>
+              <i class=' material-icons'>account_circle</i>
+            </a>
+          </li>
+        </ul>
+
+        <a href="#" data-activates="slide-out" class="button-collapse">
+          <i class="mdi-navigation-menu"></i>
+        </a>
+      </div>
+    </nav>
+
+    
+  </header>
+
+  <main>
+    <h4>Doctorants</h4>
+    <br>
+    <div class="row">
+      <div class="tableview" class="col s12">
+        <table class="centered striped responsive-table">
+          <thead>
+            <tr>
+              <th>N° d'inscription</th>
+              <th>fichier d'inscription</th>
+              <th>année</th>
+              <th>Etat</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+        
+          <tbody id="result">
+            {% for doctorant in doctorants %}
+            <tr>
+              <td>{{ doctorant.user }}</td>
+              <td><a href="{{ doctorant.fichier_inscription.url }}" download>Télécharge</a></td>
+              <td>{{ doctorant.annee }}</td>
+              <td>{% if doctorant.validation %}
+                Validé
+              {% else %}
+                Non Validé
+              {% endif %}</td>
+    
+              <td>
+                <div class="submit1">
+                  <form method="post" action="{% url 'demandesComptes' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="doctorant_id" value="{{ doctorant.id }}">
+                    <button type="submit" name="action" value="accept">Accepté</button>
+                    <button type="submit" name="action" value="reject">Refusé</button>
+                  </form>
+                </div>
+              </td>
+              
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <br>
+    <h4>Encadreurs</h4>
+    <br>
+    <div class="row">
+      <div class="tableview" class="col s12">
+        <table class="centered striped responsive-table">
+          <thead>
+            <tr>
+              <th>N° carte professionnelle </th>
+              <th>Nom et Prénom</th>
+              <th>Etat</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+        
+          <tbody>
+            {% for encadreur in encadreurs %}
+            <tr>
+              <td>{{ encadreur.user }}</td>
+              <td>{{ encadreur.nom_prenom }}</td>
+              <td>{% if encadreur.validation %}Validé{% else %}Non Validé{% endif %}</td>
+              <td>
+                <div class="submit1">
+                  <form method="post" action="{% url 'demandesComptes' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="encadreur_id" value="{{ encadreur.id }}">
+                    <button type="submit" name="action_encadreur" value="accept">Accepté</button>
+                    <button type="submit" name="action_encadreur" value="reject">Refusé</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+   
+    
+    
+    
+    
+    
+    
+    
+
+  </main>
+  <script>
+    
+
+  </script>
+  
+    
+  <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js'></script>
+  <script src="{% static 'js/index.js'%}"></script>
+</body>
+
+</html>

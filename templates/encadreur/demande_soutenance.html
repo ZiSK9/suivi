@@ -1,0 +1,255 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>login Post-Graduation</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="" />
+	<link href="{% static 'css/bootstrap.css'%}" rel="stylesheet" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="{% static 'css/style.css'%}" rel="stylesheet" type="text/css" media="all" />
+	<link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+	<link href="http://fonts.googleapis.com/css?family=Raleway:300,400,500,600,800" rel="stylesheet">
+</head>
+<body>
+	<style>
+		.center-table {
+			margin: 0 auto;
+			float: none;
+		}
+</style>
+<style>/* CSS for Demande état d'avancement de la thèse section */
+/* CSS for Demande état d'avancement de la thèse section */
+
+
+table{
+width: 84%;
+height: 100px;
+right: 0;
+text-align: center;
+}
+th,td {
+border: 1px solid black;
+padding: 10px;
+}
+#data {
+margin-bottom: 10px;
+}
+
+.action-cell {
+border-left: none;
+border-right: none;
+}
+</style>
+
+	<body>
+		<div class="header" id="home">
+			<div class="top">
+				<div class="container">
+					<div class="col-md-9 top-left">
+						<ul>
+							<li>
+								<i class="fa fa-envelope-o" aria-hidden="true"></i>
+								<a href="mailto:Mail@univ-oran.dz">Mail@univ-oran.dz</a>
+							</li>
+							<li>
+								<i class="fa fa-envelope-o" aria-hidden="true"></i>
+								<a href="mailto:Mail@univ-oran1.dz">Mail@univ-oran1.dz</a>
+							</li>
+							<li>
+								<i class="fa fa-envelope-o" aria-hidden="true"></i>
+								<a href="mailto:Mail@doctorant">Mail@doctorant</a>
+							</li>
+						</ul>
+					</div>
+					
+				</div>
+			</div>
+			<div class="top-bar">
+				<div class="container">
+					<nav class="navbar navbar-default">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+							<a href="{% url 'index' %}">
+								<img src="{% static './images/logo.jpg'%}" height="65" />
+							</a>
+						</div>
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+                                <li>
+									<a href="{% url 'listeDoctorans' %}">Mes doctorants</a>
+								</li>
+                                <li>
+									<a href="{% url 'situations' %}">Edition de PV(les points de la grille)</a>
+								</li>
+								<li>
+									<a href="{% url 'etat' %}">situations  doctorants</a>
+								</li>
+                                <li>
+									<a href="{% url 'demandeSoutenance' %}">Demande soutenance</a>
+								</li>
+								<li>
+									<a href="{% url 'index' %}">Déconnecter</a>
+								</li>
+							</ul>
+						</div>
+						<div class="clearfix"> </div>
+					</nav>
+				</div>
+			</div>
+			<div class="banner">
+			</div>
+		</div>
+		<section class="contact">
+			<div class="container">
+				<h3 class="title-txt">
+					<span>C</span>contact Us
+				</h3>
+				<div class="contact-grids">
+					<div id="reinscription" class="col-md-12 contact-form">
+					  <h4 class="heading">Demande de soutenance</h4>
+					  <form action="{% url 'demandeSoutenance' %}" method="POST">
+						{% csrf_token %}
+						{% if messages %}
+						  <ul class="messages">
+							{% for message in messages %}
+							  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+							{% endfor %}
+						  </ul>
+						{% endif %}
+						<div class="form-group">
+						  <label for="nom_doctorant">Doctorant</label>
+						  <select id="doctorant" name="doctorant" class="form-control form-control-sm">
+							<option value="" selected disabled>Doctorants</option>
+							{% for doctorant in doctorants %}
+							  {% if doctorant.inscription.all %}
+								{% for inscription in doctorant.inscription.all %}
+								  <option value="{{ doctorant.id }}"> {{ inscription.prenom }} {{ inscription.nom }}</option>
+								{% endfor %}
+							  {% elif doctorant.reinscription.all %}
+								{% for reinscription in doctorant.reinscription.all %}
+								  <option value="{{ doctorant.id }}"> {{ reinscription.prenom }} {{ reinscription.nom }}</option>
+								{% endfor %}
+							  {% else %}
+								<option value="{{ doctorant.id }}">{{ doctorant.user.username }}</option>
+							  {% endif %}
+							{% endfor %}
+						  </select>
+						</div>
+						<div class="submit1" align="center">
+						  <br>
+						  <button class="btn btn1" type="submit">Envoyer</button>
+						</div>
+					  </form>
+					</div>
+				  </div>
+			</div>
+		<br><br><br><h3 class="text-center">Mes demandes</h3>
+		<br><br>
+		<div class="row">
+            <div class="col s12 center-align">
+                <table class="centered striped responsive-table center-table">
+			<thead>
+				<tr>
+					<th>N° inscription</th>
+					<th>Doctorant</th>
+					<th>Etat</th>
+					<th>PV CSD/CSF</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for doctorant in doctorants %}
+               {% if doctorant.soutenance.exists %}
+				<tr>
+					<td>{{ doctorant.user.username }}</td>
+					<td>
+						{% if doctorant.inscription.all %}
+						{% for inscription in doctorant.inscription.all %}
+						{{ inscription.prenom }} {{ inscription.nom }}<br>
+						{% endfor %}
+						{% elif doctorant.reinscription.all %}
+						{% for reinscription in doctorant.reinscription.all %}
+						{{ reinscription.prenom }} {{ reinscription.nom }}<br>
+						{% endfor %}
+						{% endif %}
+					</td>
+					<td>
+						{% if doctorant.soutenance.exists %}
+						  {% with soutenance=doctorant.soutenance.last %}
+							{% if soutenance.action %}
+							  Accepté
+							{% else %}
+							  Refusé
+							{% endif %}
+						  {% endwith %}
+						{% else %}
+						N/A
+						{% endif %}
+					  </td>
+					  <td>
+						{% for soutenance in doctorant.soutenance.all %}
+						  {% if soutenance.csd_csf %}
+							<a href="{{ soutenance.csd_csf.url }}" download>Télécharger</a>
+						  {% endif %}
+						{% empty %}
+						  N/A
+						{% endfor %}
+					  </td>
+					
+				</tr>
+				{% endif %}
+        {% endfor %}
+			</tbody>
+		</table></div></div></div></section>
+		
+		
+		<div class="footer">
+			<div class="container">
+				<div class="f-bg-l">
+					<div class="col-md-4 footer_grid">
+						<h3>FACULTÉS</h3>
+						<ul>
+							<li>Faculté des sciences exactes et appliquées</li>
+							<li>Faculté des sciences de la nature et de la vie</li>
+							<li>Faculté de médecine</li>
+							<li>Faculté des lettres,des arts</li>
+							<li>Faculté des sciences humaines et de la civilisation islamique</li>
+							<li>Institut des Sciences et Techniques Appliquées (ISTA)</li>
+						</ul>
+					</div>
+					<div class="col-md-4 footer_grid hpft">
+						<h3>Contact Us</h3>
+						<ul class="con_inner_text">
+							<li>
+								<span class="fa fa-map-marker" aria-hidden="true"></span>Lorem ipsum dolor sit amet</li>
+							<li>
+								<span class="fa fa-envelope-o" aria-hidden="true"></span>
+								<a href="mailto:info@example.com">info@univ1.com</a>
+							</li>
+							<li>
+								<span class="fa fa-phone" aria-hidden="true"></span> +21365785455</li>
+						</ul>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="{% static './js/jquery-2.2.3.min.js'%}"></script>
+		<script src="{% static './js/main.js'%}"></script>
+		<script type="text/javascript" src="{% static './js/easing.js'%}"></script>
+		<a href="#home" id="toTop" style="display: block;">
+			<span id="toTopHover" style="opacity: 1;"> </span>
+		</a>
+		<script src="{% static './admin/js/index.js'%}"></script>
+		<script type="text/javascript" src="{% static './js/bootstrap.js'%}"></script>
+	</body>
+
+</html>

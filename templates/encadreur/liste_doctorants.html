@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>login Post-Graduation</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="" />
+	<link href="{% static '/css/bootstrap.css'%}" rel="stylesheet" type="text/css" media="all" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="{% static './css/style.css'%}" rel="stylesheet" type="text/css" media="all" />
+	<link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+	<link href="http://fonts.googleapis.com/css?family=Raleway:300,400,500,600,800" rel="stylesheet">
+</head>
+<body>
+	<style>
+					.center-table {
+						margin: 0 auto;
+						float: none;
+					}
+	</style>
+	<style>/* CSS for Demande état d'avancement de la thèse section */
+		/* CSS for Demande état d'avancement de la thèse section */
+        .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+table{
+      width: 84%;
+      height: 100px;
+    right: 0;
+    text-align: center;
+    }
+th,td {
+    border: 1px solid black;
+    padding: 10px;
+}
+#data {
+    margin-bottom: 10px;
+}
+#data input, button {
+    padding: 10px;
+    width: 90px;
+}
+.btnDelete,
+  .btnEdit {
+    padding: 5px 10px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btnEdit {
+    background-color: #3498db;
+  }
+  .action-cell {
+    border-left: none;
+    border-right: none;
+  }
+		</style>
+
+	<body>
+		<div class="header" id="home">
+			<div class="top">
+				<div class="container">
+					<div class="col-md-9 top-left">
+						<ul>
+							<li>
+								<i class="fa fa-envelope-o" aria-hidden="true"></i>
+								<a href="mailto:Mail@univ-oran.dz">Mail@univ-oran.dz</a>
+							</li>
+							<li>
+								<i class="fa fa-envelope-o" aria-hidden="true"></i>
+								<a href="mailto:Mail@univ-oran1.dz">Mail@univ-oran1.dz</a>
+							</li>
+							<li>
+								<i class="fa fa-envelope-o" aria-hidden="true"></i>
+								<a href="mailto:Mail@doctorant">Mail@doctorant</a>
+							</li>
+						</ul>
+					</div>
+					
+				</div>
+			</div>
+			<div class="top-bar">
+				<div class="container">
+					<nav class="navbar navbar-default">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+							<a href="{% url 'index' %}">
+								<img src="{% static './images/logo.jpg'%}" height="65" />
+							</a>
+						</div>
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+                                <li>
+									<a href="{% url 'listeDoctorans' %}">Mes doctorants</a>
+								</li>
+                                <li>
+									<a href="{% url 'situations' %}">Edition de PV(les points de la grille)</a>
+								</li>
+								<li>
+									<a href="{% url 'etat' %}">situations  doctorants</a>
+								</li>
+                                <li>
+									<a href="{% url 'demandeSoutenance' %}">Demande soutenance</a>
+								</li>
+								<li>
+									<a href="{% url 'index' %}">Déconnecter</a>
+								</li>
+							</ul>
+						</div>
+						<div class="clearfix"> </div>
+					</nav>
+				</div>
+			</div>
+			<div class="banner">
+			</div>
+		</div>
+        <br><br><br><br><br>
+		<div class="row">
+            <div class="col s12 center-align">
+                <table class="centered striped responsive-table center-table">
+                    <thead>
+                        <tr>
+                            <th>N° inscription</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Titre du sujet</th>
+                            <th>Année</th>
+                            <th>Date de 1ère inscription</th>
+                            <th>Nom encadreur</th>
+                            <th>Nom co-encadreur</th>
+                            <th>Mail public (yahoo, gmail)</th>
+                            <th>Mail institutionnel (edu@univ-oran1.dz)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doctorant in doctorants %}
+                            {% if doctorant.inscription.exists %}
+                                {% for inscription in doctorant.inscription.all %}
+                                    <tr>
+                                        <td>{{ inscription.numero_inscription }}</td>
+                                        <td>{{ inscription.nom }}</td>
+                                        <td>{{ inscription.prenom }}</td>
+                                        <td>{{ inscription.titre_sujet }}</td>
+                                        <td>{{ doctorant.annee }}</td>
+                                        <td>{{ inscription.date_premier_inscription }}</td>
+                                        <td>{{ inscription.nom_encadreur }}</td>
+                                        <td>{{ inscription.nom_co_encadreur }}</td>
+                                        <td>{{ inscription.mail_public }}</td>
+                                        <td>{{ inscription.mail_institutionnel }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            {% if doctorant.reinscription.exists %}
+                                {% for reinscription in doctorant.reinscription.all %}
+                                    <tr>
+                                        <td>{{ reinscription.numero_inscription }}</td>
+                                        <td>{{ reinscription.nom }}</td>
+                                        <td>{{ reinscription.prenom }}</td>
+                                        <td>{{ reinscription.titre_sujet }}</td>
+                                        <td>{{ doctorant.annee }}</td>
+                                        <td>{{ reinscription.date_premier_inscription }}</td>
+                                        <td>{{ reinscription.nom_encadreur }}</td>
+                                        <td>{{ reinscription.nom_co_encadreur }}</td>
+                                        <td>{{ reinscription.mail_public }}</td>
+                                        <td>{{ reinscription.mail_institutionnel }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        
+        
+		
+		
+		
+		
+		<script type="text/javascript" src="{% static './js/jquery-2.2.3.min.js'%}"></script>
+		<script src="{% static './js/main.js'%}"></script>
+		<script type="text/javascript" src="{% static './js/easing.js'%}"></script>
+		<a href="#home" id="toTop" style="display: block;">
+			<span id="toTopHover" style="opacity: 1;"> </span>
+		</a>
+		<script src="{% static './admin/js/index.js'%}"></script>
+		<script type="text/javascript" src="{% static './js/bootstrap.js'%}"></script>
+	</body>
+
+</html>
